@@ -46,6 +46,7 @@ class App extends React.Component {
 
   //to delete
   handleDeleteRow = async topicId => {
+    debugger;
     await deleteTopic(topicId);
     const topicsInState = [...this.state.topics];
     this.setState(prevState => {
@@ -58,15 +59,12 @@ class App extends React.Component {
         return {
           topics: topicsInState
         };
-      } else {
-        return {
-          topics: [...prevState.topics]
-        };
       }
     });
   };
 
   renderDataRow(topic) {
+    debugger;
     const disabled = Boolean(this.state.topicToEdit);
     return (
       <tr key={topic.id}>
@@ -94,6 +92,7 @@ class App extends React.Component {
     this.setState({
       editedName: "",
       editedDesc: "",
+      editId: "",
       topicToEdit: null
     });
   handleNameChange = event => this.setState({ editedName: event.target.value });
@@ -103,7 +102,9 @@ class App extends React.Component {
   handleClickOpen = () => {
     this.setState({ open: true });
   };
-
+  handleCloseCancle = () => {
+    this.setState({ open: false });
+  };
   handleClose = async () => {
     this.setState({ open: false });
     const requestBody = {
@@ -111,16 +112,17 @@ class App extends React.Component {
       name: this.state.editedName,
       description: this.state.editedDesc
     };
-    console.log(requestBody);
+    //console.log(requestBody);
     await addNewTopic(requestBody);
 
     const response = await fetchAllTopics();
-    console.log(response);
+    //console.log(response);
     //console.log(response.data)
 
     this.setState({
       topics: response.data
     });
+    this.clearEdit();
   };
 
   handleUpdateRow = async () => {
@@ -149,6 +151,7 @@ class App extends React.Component {
     }
   };
   renderEditableRow(topic) {
+    debugger;
     return (
       <tr key={topic.id}>
         <td>{topic.id}</td>
@@ -188,7 +191,7 @@ class App extends React.Component {
         </button>
         <Dialog
           open={this.state.open}
-          onClose={this.handleClose}
+          onClose={this.handleCloseCancle}
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Add Details</DialogTitle>
@@ -245,6 +248,7 @@ class App extends React.Component {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {this.state.topics.map(topic =>
               topic.id === this.state.topicToEdit
