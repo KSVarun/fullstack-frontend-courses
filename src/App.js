@@ -23,17 +23,16 @@ class App extends React.Component {
     topics: [],
     editedName: "",
     editedDesc: "",
-    editId: "",
     topicToEdit: null,
     open: false
   };
 
   async componentDidMount() {
     const response = await fetchAllTopics();
-    //console.log(response.data)
+    console.log(response.data.content);
 
     this.setState({
-      topics: response.data
+      topics: response.data.content
     });
   }
 
@@ -46,7 +45,6 @@ class App extends React.Component {
 
   //to delete
   handleDeleteRow = async topicId => {
-    debugger;
     await deleteTopic(topicId);
     const topicsInState = [...this.state.topics];
     this.setState(prevState => {
@@ -64,7 +62,6 @@ class App extends React.Component {
   };
 
   renderDataRow(topic) {
-    debugger;
     const disabled = Boolean(this.state.topicToEdit);
     return (
       <tr key={topic.id}>
@@ -92,12 +89,10 @@ class App extends React.Component {
     this.setState({
       editedName: "",
       editedDesc: "",
-      editId: "",
       topicToEdit: null
     });
   handleNameChange = event => this.setState({ editedName: event.target.value });
   handleDescChange = event => this.setState({ editedDesc: event.target.value });
-  handleIDChange = event => this.setState({ editId: event.target.value });
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -108,7 +103,6 @@ class App extends React.Component {
   handleClose = async () => {
     this.setState({ open: false });
     const requestBody = {
-      id: this.state.editId,
       name: this.state.editedName,
       description: this.state.editedDesc
     };
@@ -151,7 +145,6 @@ class App extends React.Component {
     }
   };
   renderEditableRow(topic) {
-    debugger;
     return (
       <tr key={topic.id}>
         <td>{topic.id}</td>
@@ -199,16 +192,6 @@ class App extends React.Component {
             <DialogContentText>
               Add topics ID, name and description
             </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="id"
-              label="ID"
-              type="text"
-              fullWidth
-              value={this.state.editId}
-              onChange={this.handleIDChange}
-            />
             <TextField
               margin="dense"
               id="name"
