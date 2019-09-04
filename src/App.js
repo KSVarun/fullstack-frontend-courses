@@ -3,7 +3,8 @@ import {
   fetchAllTopics,
   updateTopic,
   deleteTopic,
-  addNewTopic
+  addNewTopic,
+  fetchPage
 } from "./api/CoursesComponent";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -24,17 +25,24 @@ class App extends React.Component {
     editedName: "",
     editedDesc: "",
     topicToEdit: null,
-    open: false
+    open: false,
+    page: 0,
+    prevPage: true,
+    nextPage: false
   };
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     const response = await fetchAllTopics();
-    console.log(response.data.content);
+    //console.log(response.data.content);
+    if (response.data.totalPages > 1) {
+      this.setState.nextPage = true;
+    }
 
     this.setState({
-      topics: response.data.content
+      topics: response.data.content,
+      page: response.data.number
     });
-  }
+  };
 
   handleEditRow = topic =>
     this.setState({
@@ -114,7 +122,7 @@ class App extends React.Component {
     //console.log(response.data)
 
     this.setState({
-      topics: response.data
+      topics: response.data.content
     });
     this.clearEdit();
   };
@@ -176,7 +184,51 @@ class App extends React.Component {
     );
   }
 
+  handlePagePrev = async () => {
+    let prePage = this.state.page - 1;
+    const response = await fetchPage(prePage);
+
+    if (prePage === 0) {
+      this.setState({
+        topics: response.data.content,
+        page: response.data.number,
+        prevPage: true,
+        nextPage: false
+      });
+    } else {
+      this.setState({
+        topics: response.data.content,
+        page: response.data.number,
+        nextPage: false
+      });
+    }
+  };
+  handlePageNext = async () => {
+    //debugger;
+    let nexPage = this.state.page + 1;
+    const response = await fetchPage(nexPage);
+
+    //debugger;
+    if (response.data.totalPages - this.state.page === 2) {
+      this.setState({
+        topics: response.data.content,
+        page: response.data.number,
+        prevPage: false,
+        nextPage: true
+      });
+    } else {
+      this.setState({
+        topics: response.data.content,
+        page: response.data.number,
+        prevPage: false,
+        nextPage: false
+      });
+    }
+  };
   render() {
+    //debugger;
+    console.log(this.state.nextPage);
+    console.log(this.state.prevPage);
     return (
       <div className="table-div" style={{ margin: "30px" }}>
         <button className="ui blue fluid button" onClick={this.handleClickOpen}>
@@ -240,6 +292,22 @@ class App extends React.Component {
             )}
           </tbody>
         </table>
+        <div align="center">
+          <button
+            className="ui blue left button"
+            disabled={this.state.prevPage}
+            onClick={this.handlePagePrev}
+          >
+            <i className="left arrow icon" />
+          </button>
+          <button
+            disabled={this.state.nextPage}
+            className="ui blue right button"
+            onClick={this.handlePageNext}
+          >
+            <i className="right arrow icon" />
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,8 @@
 import axios from "../utils/axios";
 
+export function fetchPage(pageNo) {
+  return axios.get(`/topics?page=${pageNo}`);
+}
 export function fetchAllTopics() {
   return axios.get(`/topics`);
 }
