@@ -4,7 +4,8 @@ import {
   updateTopic,
   deleteTopic,
   addNewTopic,
-  fetchPage
+  fetchPage,
+  findByName
 } from "./api/CoursesComponent";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -27,21 +28,34 @@ class App extends React.Component {
     topicToEdit: null,
     open: false,
     page: 0,
+    totalPages: 0,
     prevPage: true,
-    nextPage: false
+    nextPage: false,
+    topicsBeforeSearch: [],
+    searchKey: "Search",
+    searchFocus: null
   };
 
   componentDidMount = async () => {
+    debugger;
     const response = await fetchAllTopics();
-    //console.log(response.data.content);
-    if (response.data.totalPages > 1) {
-      this.setState.nextPage = true;
+    console.log(response.data.totalPages);
+    if (response.data.totalPages === 1) {
+      //debugger;
+      this.setState({ nextPage: true });
     }
 
     this.setState({
       topics: response.data.content,
-      page: response.data.number
+      page: response.data.number,
+      topicsBeforeSearch: response.data.content,
+      totalPages: response.data.totalPages
     });
+  };
+
+  componentDidUpdate = () => {
+    // debugger;
+    // console.log(this.state.totalPages);
   };
 
   handleEditRow = topic =>
@@ -97,7 +111,8 @@ class App extends React.Component {
     this.setState({
       editedName: "",
       editedDesc: "",
-      topicToEdit: null
+      topicToEdit: null,
+      searchFocus: false
     });
   handleNameChange = event => this.setState({ editedName: event.target.value });
   handleDescChange = event => this.setState({ editedDesc: event.target.value });
@@ -225,15 +240,40 @@ class App extends React.Component {
       });
     }
   };
+  handleEnterKey = async e => {
+    if (e.keyCode === 13) {
+      let searchValue = e.target.value;
+      this.setState({ searchKey: searchValue });
+
+      const response = await findByName(searchValue);
+      if (response.data != null) {
+        let searchedResult = [];
+        searchedResult.push(response.data);
+        this.setState({ topics: searchedResult });
+      }
+    } else if (e.keyCode === 27) {
+      this.clearEdit();
+      //console.log(this.state.searchFocus);
+      this.setState({ topics: this.state.topicsBeforeSearch });
+    }
+  };
+
   render() {
     //debugger;
-    console.log(this.state.nextPage);
-    console.log(this.state.prevPage);
     return (
       <div className="table-div" style={{ margin: "30px" }}>
-        <button className="ui blue fluid button" onClick={this.handleClickOpen}>
-          ADD
-        </button>
+        <div
+          style={{ position: "relative", left: "1150px" }}
+          className="ui small icon input"
+        >
+          <input
+            type="text"
+            placeholder="Search"
+            onKeyDown={this.handleEnterKey}
+            //onChange={this.handleEnterKey}
+          />
+          <i className="search icon" />
+        </div>
         <Dialog
           open={this.state.open}
           onClose={this.handleCloseCancle}
@@ -306,6 +346,12 @@ class App extends React.Component {
             onClick={this.handlePageNext}
           >
             <i className="right arrow icon" />
+          </button>
+          <button
+            className="ui blue right floated button "
+            onClick={this.handleClickOpen}
+          >
+            <i className="plus  icon" />
           </button>
         </div>
       </div>

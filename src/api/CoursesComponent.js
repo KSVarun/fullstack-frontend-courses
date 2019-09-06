@@ -23,3 +23,7 @@ export function deleteTopic(id) {
 export function addNewTopic(topic) {
   return axios.post(`/topics/`, topic);
 }
+
+export function findByName(topicName) {
+  return axios.get(`/topics/${topicName}`);
+}
