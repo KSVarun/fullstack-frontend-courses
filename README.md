@@ -28,6 +28,14 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ## Screenshots
+## List of courses
+![](images/pic1.png)
+
+## Adding new course
+![](images/pic2.png)
+
+## Editing a course
+![](images/pic3.png)
 
 
 ### `npm run eject`
