@@ -1,11 +1,12 @@
 import React from "react";
 import {
   fetchAllTopics,
-  updateTopic,
   deleteTopic,
+  sortByName,
   addNewTopic,
-  fetchPage,
-  findByName
+  updateTopic,
+  findByName,
+  fetchPage
 } from "./api/CoursesComponent";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -33,7 +34,9 @@ class App extends React.Component {
     nextPage: false,
     topicsBeforeSearch: [],
     searchKey: "Search",
-    searchFocus: null
+    searchFocus: null,
+    sortIcon: "angle down icon",
+    sort: "desc"
   };
 
   componentDidMount = async () => {
@@ -201,7 +204,14 @@ class App extends React.Component {
 
   handlePagePrev = async () => {
     let prePage = this.state.page - 1;
-    const response = await fetchPage(prePage);
+    debugger;
+    const way = this.state.sort === "asc" ? "desc" : "asc";
+    // if (this.state.sort === "asc") {
+    //   way = "desc";
+    // } else {
+    //   way = "asc";
+    // }
+    const response = await fetchPage(prePage, "name", way);
 
     if (prePage === 0) {
       this.setState({
@@ -219,9 +229,10 @@ class App extends React.Component {
     }
   };
   handlePageNext = async () => {
-    //debugger;
+    debugger;
     let nexPage = this.state.page + 1;
-    const response = await fetchPage(nexPage);
+    const way = this.state.sort === "asc" ? "desc" : "asc";
+    const response = await fetchPage(nexPage, "name", way);
 
     //debugger;
     if (response.data.totalPages - this.state.page === 2) {
@@ -255,6 +266,24 @@ class App extends React.Component {
       this.clearEdit();
       //console.log(this.state.searchFocus);
       this.setState({ topics: this.state.topicsBeforeSearch });
+    }
+  };
+
+  handleNameSort = async () => {
+    if (this.state.sort === "desc") {
+      const response = await sortByName("name", "desc");
+      this.setState({
+        topics: response.data.content,
+        sort: "asc",
+        sortIcon: "angle up icon"
+      });
+    } else {
+      const response = await sortByName("name", "asc");
+      this.setState({
+        topics: response.data.content,
+        sort: "desc",
+        sortIcon: "angle down icon"
+      });
     }
   };
 
@@ -317,8 +346,22 @@ class App extends React.Component {
         <table className="ui celled table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
+              <th>ID </th>
+              <th
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}
+              >
+                Name
+                <button
+                  className="compact ui right floated icon button"
+                  onClick={this.handleNameSort}
+                >
+                  <i className={this.state.sortIcon} />
+                </button>
+              </th>
               <th>Description</th>
               <th>Actions</th>
             </tr>

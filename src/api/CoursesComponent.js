@@ -1,7 +1,7 @@
 import axios from "../utils/axios";
 
-export function fetchPage(pageNo) {
-  return axios.get(`/topics?page=${pageNo}`);
+export function fetchPage(pageNo, sortby, type) {
+  return axios.get(`/topics?page=${pageNo}&sort=${sortby},${type}`);
 }
 export function fetchAllTopics() {
   return axios.get(`/topics`);
@@ -26,4 +26,8 @@ export function addNewTopic(topic) {
 
 export function findByName(topicName) {
   return axios.get(`/topics/${topicName}`);
+}
+
+export function sortByName(topicName, type) {
+  return axios.get(`/topics?sort=${topicName},${type}`);
 }
