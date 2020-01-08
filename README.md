@@ -1,5 +1,15 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Screenshots
+## List of courses
+![](images/pic1.png)
+
+## Adding new course
+![](images/pic2.png)
+
+## Editing a course
+![](images/pic3.png)
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -26,17 +36,6 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Screenshots
-## List of courses
-![](images/pic1.png)
-
-## Adding new course
-![](images/pic2.png)
-
-## Editing a course
-![](images/pic3.png)
-
 
 ### `npm run eject`
 
